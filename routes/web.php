@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\TodoListController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\AuthUserMiddleware;
 use App\Http\Middleware\GuestMiddleware;
@@ -26,8 +27,9 @@ Route::controller(UserController::class)->group(function () {
     Route::post('/logout', 'logout')->name('logout')->middleware([AuthUserMiddleware::class]);
 });
 
-Route::get('todolist', function () {
-    return view('todolist.index', [
-        'title' => 'Todolist'
-    ]);
-})->name('todolist')->middleware([AuthUserMiddleware::class]);
+
+Route::controller(TodoListController::class)->middleware(AuthUserMiddleware::class)->group(function () {
+    Route::get('/todolist', 'todolist')->name('todolist');
+    Route::post('/todolist/add', 'add')->name('add');
+    Route::post('/todolist/remove/{id}', 'remove')->name('remove');
+});
